@@ -10,5 +10,5 @@ organizationName := "RWJSON"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play" % "2.3.0",
-  "org.specs2" %% "specs2" % "2.4.2"
+  "org.specs2" %% "specs2" % "2.4.2" % "test"
 )
