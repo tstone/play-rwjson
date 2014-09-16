@@ -1,0 +1,13 @@
+logs/
+project/project
+target/
+.history
+.idea
+.classpath
+.project
+.settings
+.cache
+.metadata
+.target
+.DS_Store
+*.iml
