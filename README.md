@@ -2,11 +2,9 @@
 
 A few bits to make working with JSON in Play a bit easier.
 
-## Main Features
+## Drop Empty JSON
 
-### Drop Empty JSON
-
-Consider this common problem scenario:
+Consider this common scenario:
 
 ```
 case class Person(name: String, age: Option[Int])
@@ -64,3 +62,38 @@ implicit def PersonWrites = new DropEmptyWrites[Person] {
   def writes(person: Person) = ...
 }
 ```
+
+### Default Behavior
+
+The following are considered "empty" by default:
+
+  * `None`
+  * `Nil` (an empty `Seq`)
+  * A `JsObject` with no properties
+
+### Extending Empty
+
+For any large project it will probably be necessary to extend the definition of what is considered empty.  This can be
+accomplished by defining an implicit function with a type signature of `(String, A) => JsProperty` (where `A` is the type
+for which empty will be defined).
+
+##### Example
+
+```
+trait MultipleChoiceAnswer
+case class Answer(value: Char) extends MultipleChoiceAnswer
+case object NoAnswer extends MultipleChoiceAnswer
+```
+
+In this case it might be necessary to consider `NoAnswer` as empty.  Defining the following implicit function in scope will allow that behavior:
+
+```
+implicit def MultipleChoiceAnswerToJsProperty[A](kv: (String, MultipleChoiceAnswer))(implicit json: Writes[MultipleChoiceAnswer]) = kv match {
+  case (key, NoAnswer)  => JsProperty(key, None)
+  case (key, a: Answer) => JsProperty(key, json.writes(a))
+}
+```
+
+As long as `(String, A)` can be implicitly converted to `JsProperty`, the behavior of dropping empty values will work.  Note that in the implementation
+of `def MultipleChoiceAnswerToJsProperty`, the value does not define the `Writes[MultipleChoiceAnswer]`.  This allows a separation of defining what values
+are "empty" and defining how "non-empty" values are written.
