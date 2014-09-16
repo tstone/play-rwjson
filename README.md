@@ -2,7 +2,7 @@
 
 A few bits to make working with JSON in Play a bit easier.
 
-## Drop Empty JSON
+## Drop Empty Values from JSON Objects
 
 Consider this common scenario:
 
@@ -95,5 +95,5 @@ implicit def MultipleChoiceAnswerToJsProperty[A](kv: (String, MultipleChoiceAnsw
 ```
 
 As long as `(String, A)` can be implicitly converted to `JsProperty`, the behavior of dropping empty values will work.  Note that in the implementation
-of `def MultipleChoiceAnswerToJsProperty`, the value does not define the `Writes[MultipleChoiceAnswer]`.  This allows a separation of defining what values
+of `def MultipleChoiceAnswerToJsProperty`, the function does not define the `Writes[MultipleChoiceAnswer]`.  This allows a separation of defining what values
 are "empty" and defining how "non-empty" values are written.
